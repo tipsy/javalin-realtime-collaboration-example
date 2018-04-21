@@ -24,6 +24,8 @@
                 ws.onmessage = msg => {
                     const offset = msg.data.length - textArea.value.length;
                     const selection = {start: textArea.selectionStart, end: textArea.selectionEnd};
+                    const startsSame = msg.data.startsWith(textArea.value.substring(0, selection.end));
+                    const endsSame = msg.data.endsWith(textArea.value.substring(selection.start));
                     textArea.value = msg.data;
                     if (startsSame && !endsSame) {
                         textArea.setSelectionRange(selection.start, selection.end);
