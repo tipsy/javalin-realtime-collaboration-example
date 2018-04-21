@@ -22,14 +22,15 @@
                 ws.onclose = setupWebSocket; // should reconnect if connection is closed
                 textArea.onkeyup = () => ws.send(textArea.value);
                 ws.onmessage = msg => {
-                    let textBeforeCaret = textArea.value.substring(0, textArea.selectionStart);
-                    let textAfterCaret = textArea.value.substring(textArea.selectionStart);
-                    let selectionLength = textArea.selectionEnd - textArea.selectionStart;
+                    const offset = msg.data.length - textArea.value.length;
+                    const selection = {start: textArea.selectionStart, end: textArea.selectionEnd};
                     textArea.value = msg.data;
-                    if (msg.data === textBeforeCaret) {
-                        textArea.setSelectionRange(textBeforeCaret.length, textBeforeCaret.length + selectionLength)
-                    } else {
-                        textArea.setSelectionRange(msg.data.indexOf(textAfterCaret), msg.data.indexOf(textAfterCaret) + selectionLength)
+                    if (startsSame && !endsSame) {
+                        textArea.setSelectionRange(selection.start, selection.end);
+                    } else if (!startsSame && endsSame) {
+                        textArea.setSelectionRange(selection.start + offset, selection.end + offset);
+                    } else { // this is what google docs does...
+                        textArea.setSelectionRange(selection.start, selection.end + offset);
                     }
                 }
             }
