@@ -4,7 +4,7 @@ import io.javalin.Javalin
 import io.javalin.embeddedserver.jetty.websocket.WsSession
 import java.util.concurrent.ConcurrentHashMap
 
-data class Collaboration(var doc: String = "", val sessions: MutableSet<WsSession> = ConcurrentHashMap.newKeySet<WsSession>())
+data class Collaboration(var doc: String = "", val sessions: MutableSet<WsSession> = ConcurrentHashMap.newKeySet())
 
 fun main(args: Array<String>) {
 
