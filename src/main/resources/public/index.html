@@ -12,14 +12,13 @@
             window.onhashchange = setupWebSocket;
 
             if (!window.location.hash) {
-                const randomId = Date.now().toString(36); // this should be more random
-                window.history.pushState(null, null, "#" + randomId);
+                const newDocumentId = Date.now().toString(36); // this should be more random
+                window.history.pushState(null, null, "#" + newDocumentId);
             }
 
             function setupWebSocket() {
                 const textArea = document.querySelector("textarea");
                 const ws = new WebSocket(`ws://localhost:7070/docs/${window.location.hash.substr(1)}`);
-                ws.onclose = setupWebSocket; // should reconnect if connection is closed
                 textArea.onkeyup = () => ws.send(textArea.value);
                 ws.onmessage = msg => {
                     const offset = msg.data.length - textArea.value.length;
@@ -34,7 +33,8 @@
                     } else { // this is what google docs does...
                         textArea.setSelectionRange(selection.start, selection.end + offset);
                     }
-                }
+                };
+                ws.onclose = setupWebSocket; // should reconnect if connection is closed
             }
         </script>
         <style>
