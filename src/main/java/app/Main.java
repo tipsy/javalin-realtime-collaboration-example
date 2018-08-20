@@ -1,7 +1,7 @@
 package app;
 
 import io.javalin.Javalin;
-import io.javalin.embeddedserver.jetty.websocket.WsSession;
+import io.javalin.websocket.WsSession;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -37,11 +37,11 @@ public class Main {
     }
 
     private static Collab getCollab(WsSession session) {
-        return collabs.get(session.param("doc-id"));
+        return collabs.get(session.pathParam("doc-id"));
     }
 
     private static void createCollab(WsSession session) {
-        collabs.put(session.param("doc-id"), new Collab());
+        collabs.put(session.pathParam("doc-id"), new Collab());
     }
 
 }

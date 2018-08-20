@@ -1,7 +1,7 @@
 package app
 
 import io.javalin.Javalin
-import io.javalin.embeddedserver.jetty.websocket.WsSession
+import io.javalin.websocket.WsSession
 import java.util.concurrent.ConcurrentHashMap
 
 data class Collaboration(var doc: String = "", val sessions: MutableSet<WsSession> = ConcurrentHashMap.newKeySet())
@@ -35,4 +35,4 @@ fun main(args: Array<String>) {
 
 }
 
-val WsSession.docId: String get() = this.param("doc-id")!! // is always present, or route won't match
+val WsSession.docId: String get() = this.pathParam("doc-id")

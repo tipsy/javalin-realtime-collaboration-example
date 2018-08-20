@@ -1,6 +1,6 @@
 package app;
 
-import io.javalin.embeddedserver.jetty.websocket.WsSession;
+import io.javalin.websocket.WsSession;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
