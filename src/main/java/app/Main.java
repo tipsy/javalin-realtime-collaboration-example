@@ -12,7 +12,6 @@ public class Main {
     public static void main(String[] args) {
 
         Javalin.create()
-            .port(7070)
             .enableStaticFiles("/public")
             .ws("/docs/:doc-id", ws -> {
                 ws.onConnect(session -> {
@@ -32,7 +31,7 @@ public class Main {
                     getCollab(session).sessions.remove(session);
                 });
             })
-            .start();
+            .start(7070);
 
     }
 

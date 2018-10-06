@@ -11,7 +11,6 @@ fun main(args: Array<String>) {
     val collaborations = ConcurrentHashMap<String, Collaboration>()
 
     Javalin.create().apply {
-        port(7070)
         enableStaticFiles("/public")
         ws("/docs/:doc-id") { ws ->
             ws.onConnect { session ->
@@ -31,7 +30,7 @@ fun main(args: Array<String>) {
                 collaborations[session.docId]!!.sessions.remove(session)
             }
         }
-    }.start()
+    }.start(7070)
 
 }
 
