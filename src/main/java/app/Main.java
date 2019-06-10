@@ -1,7 +1,7 @@
 package app;
 
 import io.javalin.Javalin;
-import io.javalin.websocket.WsSession;
+import io.javalin.websocket.WsContext;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -11,36 +11,35 @@ public class Main {
 
     public static void main(String[] args) {
 
-        Javalin.create()
-            .enableStaticFiles("/public")
-            .ws("/docs/:doc-id", ws -> {
-                ws.onConnect(session -> {
-                    if (getCollab(session) == null) {
-                        createCollab(session);
-                    }
-                    getCollab(session).sessions.add(session);
-                    session.send(getCollab(session).doc);
+        Javalin.create(config -> {
+            config.addStaticFiles("/public");
+        }).ws("/docs/:doc-id", ws -> {
+            ws.onConnect(ctx -> {
+                if (getCollab(ctx) == null) {
+                    createCollab(ctx);
+                }
+                getCollab(ctx).clients.add(ctx);
+                ctx.send(getCollab(ctx).doc);
+            });
+            ws.onMessage(ctx -> {
+                getCollab(ctx).doc = ctx.message();
+                getCollab(ctx).clients.stream().filter(c -> c.session.isOpen()).forEach(s -> {
+                    s.send(getCollab(ctx).doc);
                 });
-                ws.onMessage((session, message) -> {
-                    getCollab(session).doc = message;
-                    getCollab(session).sessions.stream().filter(WsSession::isOpen).forEach(s -> {
-                        s.send(getCollab(session).doc);
-                    });
-                });
-                ws.onClose((session, status, message) -> {
-                    getCollab(session).sessions.remove(session);
-                });
-            })
-            .start(7070);
+            });
+            ws.onClose(ctx -> {
+                getCollab(ctx).clients.remove(ctx);
+            });
+        }).start(7070);
 
     }
 
-    private static Collab getCollab(WsSession session) {
-        return collabs.get(session.pathParam("doc-id"));
+    private static Collab getCollab(WsContext ctx) {
+        return collabs.get(ctx.pathParam("doc-id"));
     }
 
-    private static void createCollab(WsSession session) {
-        collabs.put(session.pathParam("doc-id"), new Collab());
+    private static void createCollab(WsContext ctx) {
+        collabs.put(ctx.pathParam("doc-id"), new Collab());
     }
 
 }
