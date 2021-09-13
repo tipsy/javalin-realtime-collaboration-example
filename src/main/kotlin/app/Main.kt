@@ -1,6 +1,7 @@
 package app
 
 import io.javalin.Javalin
+import io.javalin.http.staticfiles.Location
 import io.javalin.websocket.WsContext
 import java.util.concurrent.ConcurrentHashMap
 
@@ -11,9 +12,9 @@ fun main() {
     val collaborations = ConcurrentHashMap<String, Collaboration>()
 
     Javalin.create {
-        it.addStaticFiles("/public")
+        it.addStaticFiles("/public", Location.CLASSPATH)
     }.apply {
-        ws("/docs/:doc-id") { ws ->
+        ws("/docs/{doc-id}") { ws ->
             ws.onConnect { ctx ->
                 if (collaborations[ctx.docId] == null) {
                     collaborations[ctx.docId] = Collaboration()

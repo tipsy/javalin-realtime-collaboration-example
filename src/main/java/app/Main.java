@@ -1,6 +1,7 @@
 package app;
 
 import io.javalin.Javalin;
+import io.javalin.http.staticfiles.Location;
 import io.javalin.websocket.WsContext;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -12,8 +13,8 @@ public class Main {
     public static void main(String[] args) {
 
         Javalin.create(config -> {
-            config.addStaticFiles("/public");
-        }).ws("/docs/:doc-id", ws -> {
+            config.addStaticFiles("/public", Location.CLASSPATH);
+        }).ws("/docs/{doc-id}", ws -> {
             ws.onConnect(ctx -> {
                 if (getCollab(ctx) == null) {
                     createCollab(ctx);
